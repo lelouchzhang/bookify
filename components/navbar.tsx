@@ -20,7 +20,7 @@ const Navbar = () => {
             alt="Bookified Logo"
             width={42}
             height={26}
-            priority
+            style={{ width: 42, height: 26 }} // TODO: remove this style when deployment
           />
           <p className="logo-text">Bookified</p>
         </Link>
