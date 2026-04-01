@@ -1,5 +1,12 @@
 "use client";
 import { cn } from "@/lib/utils";
+import {
+  ClerkLoaded,
+  Show,
+  SignInButton,
+  UserButton,
+} from "@clerk/nextjs";
+
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -43,6 +50,18 @@ const Navbar = () => {
               </Link>
             );
           })}
+          <ClerkLoaded>
+            <div className="flex gap-7.5 items-center">
+              <Show when="signed-out">
+                <SignInButton mode="modal" />
+              </Show>
+              <Show when="signed-in">
+                <div className="nav-user-link">
+                  <UserButton />
+                </div>
+              </Show>
+            </div>
+          </ClerkLoaded>
         </nav>
       </div>
     </header>
