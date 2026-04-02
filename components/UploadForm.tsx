@@ -79,7 +79,7 @@ const UploadForm = () => {
             acceptTypes={ACCEPTED_IMAGE_TYPES}
             icon={ImageIcon}
             placeholder={"Click to upload cover image"}
-            hint={"Image file (max 50MB)"}
+            hint={"Image file (max 10MB)"}
             disabled={isSubmitting}
           />
           {/* Title using Field */}

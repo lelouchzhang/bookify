@@ -8,7 +8,10 @@ import {
 
 export const UploadSchema = z.object({
   title: z.string().min(1, "Title is required").max(100, "Title is too long"),
-  author: z.string().min(1, "Title is required").max(100, "Title is too long"),
+  author: z
+    .string()
+    .min(1, "Author is required")
+    .max(100, "Author is too long"),
   persona: z.string().min(1, "Please select a persona"),
   pdfFile: z
     .instanceof(File, { message: "PDF file is required" })
@@ -29,6 +32,6 @@ export const UploadSchema = z.object({
     )
     .refine(
       (file) => !file || ACCEPTED_IMAGE_TYPES.includes(file.type),
-      "Only jpg, jpeg,png, webpand gif formats are accepted"
+      "Only jpg, jpeg,png, webp and gif formats are accepted"
     ),
 });
