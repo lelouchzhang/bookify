@@ -183,7 +183,7 @@
     @apply pt-[94px] pb-18 min-h-screen;
   }
   .navItem {
-    @apply px-1 sm:px-3 text-sm sm:text-base font-medium flex items-center cursor-pointer text-[var(--text-primary)];
+    @apply px-1 sm:px-3 text-sm sm:text-base font-medium flex items-center cursor-pointer text-(--text-primary);
   }
   .input-reset {
     @apply h-12 border-none lg:!text-lg shadow-none focus:outline-none focus-visible:ring-0;
@@ -195,7 +195,7 @@
     @apply max-w-7xl px-5 mx-auto w-full min-h-screen pt-20 flex flex-col items-center justify-center py-10;
   }
   .auth-shadow {
-    @apply rounded-2xl bg-[var(--accent-light)];
+    @apply rounded-2xl bg-(--accent-light);
   }
   .clerk-subscriptions {
     @apply py-18 min-h-screen max-w-7xl px-5 mx-auto w-full flex flex-col pb-12 items-center container;
@@ -559,7 +559,7 @@
     @apply grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-3 md:gap-x-10 gap-y-7 md:gap-y-9;
   }
   .library-empty-card {
-    @apply bg-[var(--bg-secondary)] rounded-[14px] p-12 max-w-md mx-auto;
+    @apply bg-(--bg-secondary) rounded-[14px] p-12 max-w-md mx-auto;
   }
 
   /* ===========================================
