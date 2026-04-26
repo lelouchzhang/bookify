@@ -20,11 +20,13 @@ const cached =
 export const connToDB = async () => {
   if (cached.conn) return cached.conn;
 
+  // 构造mongoose连接db的promise
   if (!cached.promise) {
     cached.promise = mongoose.connect(uri, { bufferCommands: false });
   }
 
   try {
+    // 实际的网络请求,将结果缓存
     cached.conn = await cached.promise;
   } catch (error) {
     cached.promise = null;

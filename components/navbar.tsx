@@ -5,6 +5,7 @@ import {
   Show,
   SignInButton,
   UserButton,
+  useUser,
 } from "@clerk/nextjs";
 
 import Image from "next/image";
@@ -18,6 +19,7 @@ const navItems = [
 
 const Navbar = () => {
   const pathName = usePathname();
+  const { user } = useUser();
   return (
     <header className="w-full fixed z-50 bg-(--bg-primary)">
       <div className="wrapper navbar-height py-4 flex justify-between items-center">
@@ -58,6 +60,11 @@ const Navbar = () => {
               <Show when="signed-in">
                 <div className="nav-user-link">
                   <UserButton />
+                  {user?.firstName && (
+                    <Link href={"/subscriptions"} className="nav-user-name">
+                      {user.firstName}
+                    </Link>
+                  )}
                 </div>
               </Show>
             </div>

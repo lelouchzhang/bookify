@@ -24,10 +24,17 @@ import { toast } from "sonner";
 import FileUploader from "./FileUploader";
 import LoadingOverlay from "./LoadingOverlay";
 import VoiceSelector from "./VoiceSelector";
+import { useAuth } from "@clerk/nextjs";
+import { checkBookExists } from "@/lib/actions/book.actions";
+import { useRouter } from "next/navigation";
+import { parsePDFFile } from "@/lib/utils";
 
 const UploadForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+
+  const { userId } = useAuth();
+  const router = useRouter();
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -45,11 +52,30 @@ const UploadForm = () => {
     },
   });
   const onSubmit = async (data: BookUploadFormValues) => {
-    // if (!userId) {
-    //   return toast.error("Please login to upload books");
-    // }
+    if (!userId) {
+      return toast.error("Please login to upload books");
+    }
     setIsSubmitting(true);
-    console.log(data);
+    // todo: posthog
+    try {
+      const bookInDB = await checkBookExists(data.title);
+      if (bookInDB.exists && bookInDB.data) {
+        toast.info("Book already exists");
+        form.reset();
+        router.push(`/books/${bookInDB.data.slug}`);
+        return;
+      }
+
+      const fileTitle = data.title.replace(/\s+/g, "-").toLowerCase();
+      const pdfFile = data.pdfFile;
+
+      const parsedPDF = await parsePDFFile(pdfFile);
+    } catch (error) {
+      console.error(error);
+      toast.error("Something went wrong...");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (!isMounted) return null;

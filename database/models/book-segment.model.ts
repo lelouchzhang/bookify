@@ -13,11 +13,11 @@ const BookSegmentSchema = new Schema<IBookSegment>(
   { timestamps: true }
 );
 
-// 唯一索引 确保同一本书不会出现重复的段落序号，1代表升序（-1代表降序）
+// 唯一复合索引,确保同一本书的片段顺序不重复，快速按顺序:1 获取章节
 BookSegmentSchema.index({ bookId: 1, segmentIndex: 1 }, { unique: true });
-// 普通索引，按页码查询段落能力的加速
+// 普通复合索引,根据页码快速定位内容（如"跳转到第 42 页"）
 BookSegmentSchema.index({ bookId: 1, pageNumber: 1 });
-// 文本索引，全文搜索能力，“text”为特殊语法，与排序无关，只是全文搜索。
+// 全文索引，支持在单本书内进行全文搜索（$text 查询），“text”为特殊语法，与排序无关，只是全文搜索。
 BookSegmentSchema.index({ bookId: 1, content: "text" });
 
 const BookSegment =
