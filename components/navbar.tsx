@@ -14,7 +14,7 @@ import { usePathname } from "next/navigation";
 
 const navItems = [
   { label: "Library", href: "/" },
-  { label: "Add new", href: "/books/create" },
+  { label: "Add new", href: "/books/new" },
 ];
 
 const Navbar = () => {
@@ -35,8 +35,6 @@ const Navbar = () => {
         </Link>
         <nav className="w-fit flex gap-7.5 items-center">
           {navItems.map(({ label, href }) => {
-            // if pathname eq "/", highlight very first link.
-            // if pathname !eq "/". check other navs find "href startwith the current pathname" then activate it.
             const isActive =
               pathName === href || (href !== "/" && pathName.startsWith(href));
             return (

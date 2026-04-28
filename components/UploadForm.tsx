@@ -25,9 +25,14 @@ import FileUploader from "./FileUploader";
 import LoadingOverlay from "./LoadingOverlay";
 import VoiceSelector from "./VoiceSelector";
 import { useAuth } from "@clerk/nextjs";
-import { checkBookExists } from "@/lib/actions/book.actions";
+import {
+  checkBookExists,
+  createBook,
+  saveBookSegments,
+} from "@/lib/actions/book.actions";
 import { useRouter } from "next/navigation";
 import { parsePDFFile } from "@/lib/utils";
+import { upload } from "@vercel/blob/client";
 
 const UploadForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -70,6 +75,80 @@ const UploadForm = () => {
       const pdfFile = data.pdfFile;
 
       const parsedPDF = await parsePDFFile(pdfFile);
+
+      // @vercel-blob https://vercel.com/docs/vercel-blob/client-upload
+      const uploadedPDFBlob = await upload(fileTitle, pdfFile, {
+        access: "public",
+        handleUploadUrl: "/api/upload",
+        contentType: "application/pdf",
+      });
+
+      let coverUrl: string;
+      if (data.coverImage) {
+        const coverFile = data.coverImage;
+        const uploadedCoverBlob = await upload(
+          `${fileTitle}_cover.png`,
+          coverFile,
+          {
+            access: "public",
+            handleUploadUrl: "/api/upload",
+            contentType: coverFile.type,
+          }
+        );
+        coverUrl = uploadedCoverBlob.url;
+      } else {
+        const response = await fetch(parsedPDF.cover);
+        const blob = await response.blob();
+
+        const uploadedCoverBlob = await upload(`${fileTitle}_cover.png`, blob, {
+          access: "public",
+          handleUploadUrl: "/api/upload",
+          contentType: "image/png",
+        });
+        coverUrl = uploadedCoverBlob.url;
+      }
+
+      const book = await createBook({
+        clerkId: userId,
+        title: data.title,
+        author: data.author,
+        persona: data.persona,
+        coverURL: coverUrl,
+        fileSize: pdfFile.size,
+        fileURL: uploadedPDFBlob.url,
+        fileBlobKey: uploadedPDFBlob.pathname,
+      });
+
+      if (!book.success) {
+        toast.error(
+          typeof book.error === "string" ? book.error : "Failed to create book"
+        );
+        // if (book.isBillingError) {
+        //   router.push("/subscriptions");
+        // }
+        return;
+      }
+
+      if (book.alreadyExists) {
+        toast.info("Book with same title already exists.");
+        form.reset();
+        router.push(`/books/${book.data.slug}`);
+        return;
+      }
+
+      const segments = await saveBookSegments(
+        book.data._id,
+        userId,
+        parsedPDF.content
+      );
+
+      if (!segments.success) {
+        toast.error("Failed to save book segments");
+        throw new Error("Failed to save book segments");
+      }
+
+      form.reset();
+      router.push("/");
     } catch (error) {
       console.error(error);
       toast.error("Something went wrong...");

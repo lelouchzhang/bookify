@@ -8,19 +8,19 @@ import BookSegment from "@/database/models/book-segment.model";
 export const createBook = async (data: CreateBook) => {
   try {
     await connToDB();
-    // 为书籍生成slug，查重。
+    // 为书籍生成slug，利用slug的唯一性查重。
     const slug = generateSlug(data.title);
     const existingBook = await Book.findOne({ slug }).lean();
     if (existingBook) {
       return {
         success: true,
-        // 每当传递对象时需要序列化清洗数据。
+        // 每当传递对象时需要序列化清洗。
         data: serializeData(existingBook),
         alreadyExists: true,
       };
     }
     // todo: 检查用户的创建Book是否达到订阅限制
-    // create Book
+    // 这里创建的只是一个"书皮"，实际内容需要在后续的分段中创建。
     const book = await Book.create({ ...data, slug, totalSegments: 0 });
 
     return {
@@ -31,7 +31,7 @@ export const createBook = async (data: CreateBook) => {
     console.error(`Error creating book: ${error}`);
     return {
       success: false,
-      error: error,
+      error: error instanceof Error ? error.message : String(error),
     };
   }
 };
@@ -73,6 +73,10 @@ export const saveBookSegments = async (
     console.log(
       "Deleted book segments and book due to failure to save segments."
     );
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : String(error),
+    };
   }
 };
 
@@ -95,7 +99,7 @@ export const checkBookExists = async (title: string) => {
     console.log(`Error checking book exists:`, error);
     return {
       exists: false,
-      error: error,
+      error: error instanceof Error ? error.message : String(error),
     };
   }
 };

@@ -13,13 +13,18 @@ export const serializeData = <T>(data: T): T =>
 
 // Auto generate slug
 export function generateSlug(text: string): string {
-  return text
-    .replace(/\.[^/.]+$/, "") // Remove file extension (.pdf, .txt, etc.)
-    .toLowerCase() // Convert to lowercase
-    .trim() // Remove whitespace from both ends
-    .replace(/[^\w\s-]/g, "") // Remove special characters (keep letters, numbers, spaces, hyphens)
-    .replace(/[\s_]+/g, "-") // Replace spaces and underscores with hyphens
-    .replace(/^-+|-+$/g, ""); // Remove leading/trailing hyphens
+  return (
+    text
+      .replace(/\.[^/.]+$/, "") // Remove file extension
+      .trim()
+      // 改进方案1: 显式添加常见中文字符范围（推荐兼容性更好）
+      .replace(/[^\u4e00-\u9fa5\w\s-]/g, "")
+      // 改进方案2: 使用 Unicode 字母模式（需环境支持 ES2018）
+      // .replace(/[^\p{L}\p{N}\s-]/gu, "")
+      .replace(/[\s_]+/g, "-")
+      .toLowerCase()
+      .replace(/^-+|-+$/g, "")
+  );
 }
 
 // Escape regex special characters to prevent ReDoS attacks
