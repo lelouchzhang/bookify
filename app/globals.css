@@ -210,7 +210,7 @@
     @apply max-w-7xl px-5 mx-auto w-full space-y-6 py-18 min-h-screen;
   }
   .new-book-wrapper {
-    @apply mx-auto max-w-2xl space-y-6 mt-12 mb-20;
+    @apply mx-auto max-w-2xl mt-12 mb-20;
   }
   .file-upload-shadow {
     @apply relative z-20 flex flex-col justify-center items-center p-7;
@@ -294,7 +294,7 @@
     @apply text-[var(--color-brand)];
   }
   .border-brand {
-    @apply border-[var(--color-brand)];
+    @apply border-(--color-brand);
   }
   .page-title-xl {
     @apply text-4xl md:text-5xl font-semibold text-black tracking-[-0.02em] leading-[54px] font-serif;
@@ -306,7 +306,7 @@
     @apply text-[30px] font-semibold text-black leading-9 mb-2 font-serif;
   }
   .subtitle {
-    @apply text-xl text-[var(--text-secondary)] leading-7;
+    @apply text-xl text-(--text-secondary) leading-7;
   }
   .icon-sm {
     @apply w-5 h-5;
@@ -322,7 +322,7 @@
     @apply text-base font-medium leading-6 transition-all;
   }
   .nav-link-active {
-    @apply text-[var(--color-brand)] border-b-2 border-[var(--color-brand)] pb-0.5;
+    @apply text-(--color-brand) border-b-2 border-(--color-brand) pb-0.5;
   }
   .nav-btn {
     @apply text-base font-medium text-black hover:opacity-70 transition-opacity cursor-pointer;

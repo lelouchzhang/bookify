@@ -5,6 +5,7 @@ import {
   Show,
   SignInButton,
   UserButton,
+  useUser,
 } from "@clerk/nextjs";
 
 import Image from "next/image";
@@ -13,11 +14,12 @@ import { usePathname } from "next/navigation";
 
 const navItems = [
   { label: "Library", href: "/" },
-  { label: "Add new", href: "/books/create" },
+  { label: "Add new", href: "/books/new" },
 ];
 
 const Navbar = () => {
   const pathName = usePathname();
+  const { user } = useUser();
   return (
     <header className="w-full fixed z-50 bg-(--bg-primary)">
       <div className="wrapper navbar-height py-4 flex justify-between items-center">
@@ -33,8 +35,6 @@ const Navbar = () => {
         </Link>
         <nav className="w-fit flex gap-7.5 items-center">
           {navItems.map(({ label, href }) => {
-            // if pathname eq "/", highlight very first link.
-            // if pathname !eq "/". check other navs find "href startwith the current pathname" then activate it.
             const isActive =
               pathName === href || (href !== "/" && pathName.startsWith(href));
             return (
@@ -58,6 +58,11 @@ const Navbar = () => {
               <Show when="signed-in">
                 <div className="nav-user-link">
                   <UserButton />
+                  {user?.firstName && (
+                    <Link href={"/subscriptions"} className="nav-user-name">
+                      {user.firstName}
+                    </Link>
+                  )}
                 </div>
               </Show>
             </div>
