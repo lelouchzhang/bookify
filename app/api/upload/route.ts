@@ -11,7 +11,7 @@ export const POST = async (request: Request): Promise<NextResponse> => {
       body: body,
       request: request,
       onBeforeGenerateToken: async () => {
-        const userId = await auth();
+        const { userId } = await auth();
         if (!userId) throw new Error("Unauthorized");
         return {
           allowedContentTypes: [
