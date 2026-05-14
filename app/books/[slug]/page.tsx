@@ -4,8 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, MicOff, Mic } from "lucide-react";
 
-// import { getBookBySlug } from "@/lib/actions/book.actions";
-// import VapiControls from "@/components/VapiControls";
+import { getBookBySlug } from "@/lib/actions/book.actions";
+import VapiControls from "@/components/VapiControls";
 
 export default async function BookDetailsPage({
   params,
@@ -18,13 +18,18 @@ export default async function BookDetailsPage({
     redirect("/sign-in");
   }
   const { slug } = await params;
-  // const result = await getBookBySlug(slug);
+  let result;
+  try {
+    result = await getBookBySlug(slug);
+  } catch {
+    redirect("/");
+  }
 
-  // if (!result.success || !result.data) {
-  //   redirect("/");
-  // }
+  if (!result.success || !result.data) {
+    redirect("/");
+  }
 
-  // const book = result.data;
+  const book = result.data;
 
   return (
     <div className="book-page-container">
@@ -32,7 +37,7 @@ export default async function BookDetailsPage({
         <ArrowLeft className="size-6 text-[#212a3b]" />
       </Link>
 
-      {/* <VapiControls book={book} /> */}
+      <VapiControls book={book} />
     </div>
   );
 }
