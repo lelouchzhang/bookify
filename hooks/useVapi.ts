@@ -235,19 +235,24 @@ export function useVapi(book: IBook) {
       },
     };
 
-    // Register all handlers
-    Object.entries(handlers).forEach(([event, handler]) => {
-      getVapi().on(event as keyof typeof handlers, handler as () => void);
-    });
+    // Register all handlers with correct types
+    getVapi().on("call-start", handlers["call-start"]);
+    getVapi().on("call-end", handlers["call-end"]);
+    getVapi().on("speech-start", handlers["speech-start"]);
+    getVapi().on("speech-end", handlers["speech-end"]);
+    getVapi().on("message", handlers.message);
+    getVapi().on("error", handlers.error);
 
     return () => {
       // End active session on unmount
-      if (sessionIdRef.current) {
+
+      const currentSessionId = sessionIdRef.current;
+      sessionIdRef.current = null;
+      if (currentSessionId) {
         getVapi().stop();
-        endVoiceSession(sessionIdRef.current, durationRef.current).catch(
-          (err) => console.error("Failed to end voice session on unmount:", err)
+        endVoiceSession(currentSessionId, durationRef.current).catch((err) =>
+          console.error("Failed to end voice session on unmount:", err)
         );
-        sessionIdRef.current = null;
       }
       // Cleanup handlers
       Object.entries(handlers).forEach(([event, handler]) => {

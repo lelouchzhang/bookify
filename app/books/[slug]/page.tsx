@@ -18,7 +18,12 @@ export default async function BookDetailsPage({
     redirect("/sign-in");
   }
   const { slug } = await params;
-  const result = await getBookBySlug(slug);
+  let result;
+  try {
+    result = await getBookBySlug(slug);
+  } catch {
+    redirect("/");
+  }
 
   if (!result.success || !result.data) {
     redirect("/");
