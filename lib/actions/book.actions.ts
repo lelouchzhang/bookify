@@ -5,6 +5,7 @@ import { escapeRegex, generateSlug, serializeData } from "../utils";
 import Book from "@/database/models/book.model";
 import BookSegment from "@/database/models/book-segment.model";
 import mongoose from "mongoose";
+import { revalidatePath } from "next/cache";
 
 export const createBook = async (data: CreateBook) => {
   try {
@@ -23,6 +24,8 @@ export const createBook = async (data: CreateBook) => {
     // todo: 检查用户的创建Book是否达到订阅限制
     // 这里创建的只是一个"书皮"，实际内容需要在后续的分段中创建。
     const book = await Book.create({ ...data, slug, totalSegments: 0 });
+
+    revalidatePath("/");
 
     return {
       success: true,

@@ -3,6 +3,8 @@ import Hero from "@/components/hero";
 import { getAllBooks } from "@/lib/actions/book.actions";
 // import { sampleBooks } from "@/lib/constants";
 
+export const dynamic = "force-dynamic";
+
 const Home = async ({
   searchParams,
 }: {
